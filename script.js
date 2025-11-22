@@ -68,8 +68,10 @@ window.addEventListener('scroll', () => {
     
     if (currentScroll > 100) {
         header.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+        header.style.borderBottomColor = 'rgba(255, 255, 255, 0.1)';
     } else {
         header.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        header.style.borderBottomColor = 'transparent';
     }
     
     lastScroll = currentScroll;

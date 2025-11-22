@@ -130,8 +130,21 @@ body::after {
     z-index: 1000;
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid transparent;
     padding: 20px 0;
+    overflow: visible;
+    transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    opacity: 0.3;
 }
 
 .nav-wrapper {
@@ -1351,7 +1364,7 @@ section::before {
     display: grid;
     grid-template-columns: 1fr 400px;
     gap: 60px;
-    align-items: start;
+    align-items: stretch;
 }
 
 .about-text {
@@ -1432,12 +1445,17 @@ section::before {
     position: static;
     min-height: auto;
     padding-left: 0;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
 }
 
 .tech-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+    width: 100%;
+    align-content: start;
 }
 
 .tech-item {
@@ -2154,6 +2172,15 @@ section::before {
     
     .header {
         padding: 12px 0;
+        overflow: visible;
+    }
+    
+    .header .container {
+        overflow: visible;
+    }
+    
+    .nav-wrapper {
+        overflow: visible;
     }
 
     .logo-icon {
@@ -2186,13 +2213,13 @@ section::before {
     }
     
     .nav-wrapper::before {
-        left: 24px;
+        left: 20px;
         background: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
         opacity: 0;
     }
     
     .nav-wrapper::after {
-        right: 24px;
+        right: 20px;
         background: linear-gradient(to left, rgba(0, 0, 0, 0.9), transparent);
         opacity: 1;
     }
@@ -2212,14 +2239,14 @@ section::before {
     
     .nav {
         order: 2;
-        width: 100%;
+        width: calc(100% + 40px);
         justify-content: flex-start;
         gap: 12px;
         margin-top: 0;
-        margin-left: -24px;
-        margin-right: -24px;
-        padding-left: 24px;
-        padding-right: 24px;
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
         padding-top: 4px;
         padding-bottom: 12px;
         overflow-x: auto;
@@ -2231,6 +2258,7 @@ section::before {
         flex: 1;
         min-width: 0;
         position: relative;
+        box-sizing: content-box;
     }
     
     .nav::-webkit-scrollbar {
@@ -2539,7 +2567,7 @@ section::before {
     }
     
     .hero-content {
-        padding: 0 16px;
+        padding: 60px 16px;
         text-align: left;
     }
     
