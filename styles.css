@@ -44,10 +44,14 @@
 html {
     scroll-behavior: smooth;
     height: 100%;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 html, body {
     min-height: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 body {
@@ -57,6 +61,9 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     position: relative;
+    width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 body::before {
@@ -110,6 +117,8 @@ body::after {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Header */
@@ -130,6 +139,7 @@ body::after {
     align-items: center;
     justify-content: space-between;
     gap: 32px;
+    position: relative;
 }
 
 .logo {
@@ -191,6 +201,7 @@ body::after {
     gap: 32px;
     flex: 1;
     justify-content: center;
+    align-items: center;
 }
 
 .nav a {
@@ -200,6 +211,8 @@ body::after {
     font-weight: 400;
     transition: color 0.3s ease;
     text-shadow: 0 0 10px rgba(240, 244, 248, 0.2);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .nav a:hover {
@@ -260,12 +273,21 @@ body::after {
     overflow: hidden;
 }
 
+.hero .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+}
+
 .hero-content {
     text-align: center;
     max-width: 1000px;
     margin: 0 auto;
     position: relative;
     z-index: 2;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .hero-title {
@@ -455,6 +477,8 @@ section::before {
     letter-spacing: -0.02em;
     position: relative;
     z-index: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .section-subtitle {
@@ -464,6 +488,8 @@ section::before {
     max-width: 700px;
     margin: 0 auto 60px;
     line-height: 1.7;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
     position: relative;
     z-index: 1;
     text-shadow: 0 0 15px rgba(240, 244, 248, 0.2);
@@ -1324,7 +1350,7 @@ section::before {
 .about-content {
     display: grid;
     grid-template-columns: 1fr 400px;
-    gap: 80px;
+    gap: 60px;
     align-items: start;
 }
 
@@ -1402,10 +1428,10 @@ section::before {
 }
 
 .about-tech {
-    padding: 140px 0;
+    padding: 0;
     position: static;
-    min-height: 600px;
-    padding-left: 30px;
+    min-height: auto;
+    padding-left: 0;
 }
 
 .tech-grid {
@@ -1959,6 +1985,7 @@ section::before {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    max-width: calc(100vw - 50px);
 }
 
 .social-btn {
@@ -1968,6 +1995,7 @@ section::before {
 .social-link {
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 15px 20px;
     border-radius: 50px;
     text-decoration: none;
@@ -1976,6 +2004,8 @@ section::before {
     font-weight: 600;
     font-size: 14px;
     color: white;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 @keyframes whatsapp-pulse-cycle {
@@ -2113,7 +2143,17 @@ section::before {
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-wrapper {
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .logo {
+        width: 100%;
+    }
+    
+    .header {
+        padding: 12px 0;
     }
 
     .logo-icon {
@@ -2121,17 +2161,153 @@ section::before {
         height: 32px;
     }
 
+    .nav-wrapper {
+        position: relative;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .logo {
+        width: 100%;
+    }
+    
+    .nav-wrapper::before,
+    .nav-wrapper::after {
+        content: '';
+        position: absolute;
+        top: auto;
+        bottom: 0;
+        width: 30px;
+        height: 60px;
+        z-index: 10;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    
+    .nav-wrapper::before {
+        left: 24px;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
+        opacity: 0;
+    }
+    
+    .nav-wrapper::after {
+        right: 24px;
+        background: linear-gradient(to left, rgba(0, 0, 0, 0.9), transparent);
+        opacity: 1;
+    }
+    
+    .nav-wrapper.scrolled-left::before {
+        opacity: 1;
+    }
+    
+    .nav-wrapper.scrolled-right::after {
+        opacity: 0;
+    }
+    
+    .nav-wrapper.scrolled-both::before,
+    .nav-wrapper.scrolled-both::after {
+        opacity: 1;
+    }
+    
     .nav {
-        order: 3;
+        order: 2;
         width: 100%;
         justify-content: flex-start;
-        gap: 20px;
-        margin-top: 16px;
+        gap: 12px;
+        margin-top: 0;
+        margin-left: -24px;
+        margin-right: -24px;
+        padding-left: 24px;
+        padding-right: 24px;
+        padding-top: 4px;
+        padding-bottom: 12px;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        scroll-behavior: smooth;
+        flex: 1;
+        min-width: 0;
+        position: relative;
     }
+    
+    .nav::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .nav::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+    }
+    
+    .nav::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+    
+    .nav a {
+        padding: 10px 18px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        font-size: 14px;
+        position: relative;
+        animation: slideInFromRight 0.5s ease-out;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+    
+    .nav a:first-child {
+        animation: slideInFromRight 0.5s ease-out, pulseIndicator 3s ease-in-out infinite;
+    }
+    
+    .nav a:last-child {
+        animation: slideInFromRight 0.5s ease-out 0.1s, pulseIndicator 3s ease-in-out infinite 1s;
+    }
+    
+    .nav a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+    
+    @keyframes pulseIndicator {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3), 0 0 0 0 rgba(255, 255, 255, 0.2);
+        }
+        50% {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0), 0 0 0 6px rgba(255, 255, 255, 0);
+        }
+    }
+    
+    @keyframes slideInFromRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
 
     .btn-primary {
-        padding: 10px 20px;
-        font-size: 14px;
+        display: none;
+    }
+    
+    .nav-wrapper {
+        flex-wrap: nowrap;
+    }
+    
+    .logo {
+        flex-shrink: 0;
     }
 
     .hero {
@@ -2148,7 +2324,12 @@ section::before {
 
     .about-content {
         grid-template-columns: 1fr;
-        gap: 60px;
+        gap: 40px;
+    }
+    
+    .about-tech {
+        padding: 0;
+        margin-top: 0;
     }
 
     .projects-grid {
@@ -2216,12 +2397,84 @@ section::before {
     }
 
     .social-link {
-        padding: 12px 15px;
+        padding: 12px;
         border-radius: 50%;
+        min-width: 48px;
+        min-height: 48px;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+    }
+    
+    .social-link svg {
+        margin-right: 0;
+        width: 24px;
+        height: 24px;
+    }
+    
+    .social-text {
+        display: none !important;
+    }
+    
+    .floating-social {
+        bottom: 20px;
+        right: 20px;
+        gap: 12px;
+    }
+    
+    .social-tooltip {
+        display: none;
     }
 
     section {
         padding: 60px 0;
+    }
+    
+    .hero {
+        padding: 140px 0 60px;
+        min-height: auto;
+    }
+    
+    .hero .container {
+        padding: 0 20px;
+    }
+    
+    .hero-content {
+        padding: 0;
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    .hero-title {
+        font-size: clamp(28px, 8vw, 48px);
+        line-height: 1.2;
+        margin-bottom: 20px;
+        padding: 0;
+        text-align: left;
+    }
+    
+    .hero-description {
+        font-size: 16px;
+        padding: 0;
+        margin-bottom: 30px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        text-align: left;
+        max-width: 100%;
+    }
+    
+    .hero-buttons {
+        padding: 0;
+        gap: 12px;
+        justify-content: flex-start;
+    }
+    
+    .btn-hero {
+        padding: 14px 24px;
+        font-size: 14px;
+        flex: 1;
+        min-width: 140px;
     }
 }
 
@@ -2266,6 +2519,96 @@ section::before {
     
     .tech-tag-item {
         padding: 10px 12px;
+    }
+    
+    /* Fix text overflow on mobile */
+    body {
+        overflow-x: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    * {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Hero section mobile fixes */
+    .hero {
+        padding: 140px 0 40px;
+    }
+    
+    .hero-content {
+        padding: 0 16px;
+        text-align: left;
+    }
+    
+    .hero-title {
+        font-size: 24px;
+        line-height: 1.3;
+        padding: 0;
+        word-break: break-word;
+        text-align: left;
+    }
+    
+    .hero-description {
+        font-size: 14px;
+        padding: 0;
+        line-height: 1.6;
+        word-break: break-word;
+        text-align: left;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        align-items: flex-start;
+    }
+    
+    .btn-hero {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    /* Social buttons mobile */
+    .floating-social {
+        bottom: 15px;
+        right: 15px;
+        gap: 10px;
+    }
+    
+    .social-link {
+        padding: 10px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .social-link svg {
+        width: 22px;
+        height: 22px;
+    }
+    
+    /* Section titles mobile */
+    .section-title {
+        font-size: 28px;
+        padding: 0 12px;
+        word-break: break-word;
+    }
+    
+    .section-subtitle {
+        font-size: 14px;
+        padding: 0 12px;
+        word-break: break-word;
+    }
+    
+    /* Prevent text overflow */
+    h1, h2, h3, h4, h5, h6, p, span, a, li {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 }
 

@@ -750,3 +750,49 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// Horizontal scroll indicators for mobile menu
+function initNavScrollIndicators() {
+    const nav = document.querySelector('.nav');
+    const navWrapper = document.querySelector('.nav-wrapper');
+    
+    if (!nav || !navWrapper) return;
+    
+    function updateScrollIndicators() {
+        const isScrollable = nav.scrollWidth > nav.clientWidth;
+        const scrollLeft = nav.scrollLeft;
+        const scrollRight = nav.scrollWidth - nav.clientWidth - scrollLeft;
+        
+        // Remove all classes first
+        navWrapper.classList.remove('scrolled-left', 'scrolled-right', 'scrolled-both');
+        
+        if (!isScrollable) {
+            return; // No scroll needed
+        }
+        
+        // Update gradient indicators
+        if (scrollLeft <= 5 && scrollRight > 5) {
+            // At the start, show right indicator
+            navWrapper.classList.add('scrolled-right');
+        } else if (scrollLeft > 5 && scrollRight <= 5) {
+            // At the end, show left indicator
+            navWrapper.classList.add('scrolled-left');
+        } else if (scrollLeft > 5 && scrollRight > 5) {
+            // In the middle, show both
+            navWrapper.classList.add('scrolled-both');
+        }
+    }
+    
+    // Check on load and resize
+    updateScrollIndicators();
+    window.addEventListener('resize', updateScrollIndicators);
+    
+    // Update on scroll
+    nav.addEventListener('scroll', updateScrollIndicators);
+    
+    // Initial check after a short delay to ensure layout is ready
+    setTimeout(updateScrollIndicators, 100);
+}
+
+// Initialize nav scroll indicators when page loads
+window.addEventListener('load', initNavScrollIndicators);
+
