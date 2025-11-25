@@ -222,13 +222,24 @@ window.addEventListener('load', () => {
 
 // Service card hover effect - handled by CSS
 
-// Project Modal
-const projectModal = document.getElementById('projectModal');
-const modalClose = document.querySelector('.modal-close');
-const modalOverlay = document.querySelector('.modal-overlay');
-const modalTitle = document.querySelector('.modal-title');
-const modalText = document.querySelector('.modal-text');
-const galleryGrid = document.querySelector('.gallery-grid');
+// Project Modal - Initialize after DOM is ready
+let projectModal, modalClose, modalOverlay, modalTitle, modalText, galleryGrid;
+
+function initModalElements() {
+    projectModal = document.getElementById('projectModal');
+    modalClose = document.querySelector('.modal-close');
+    modalOverlay = document.querySelector('.modal-overlay');
+    modalTitle = document.querySelector('.modal-title');
+    modalText = document.querySelector('.modal-text');
+    galleryGrid = document.querySelector('.gallery-grid');
+}
+
+// Initialize modal elements when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModalElements);
+} else {
+    initModalElements();
+}
 
 // Project data
 const projectsData = {
@@ -441,10 +452,23 @@ const projectsData = {
     }
 };
 
-// Open modal function
-function openProjectModal(projectId) {
+// Open modal function - make it globally available
+window.openProjectModal = function(projectId) {
+    // Ensure modal elements are initialized
+    if (!projectModal || !modalTitle || !modalText) {
+        initModalElements();
+    }
+    
+    if (!projectModal || !modalTitle || !modalText) {
+        console.error('Modal elements not found');
+        return;
+    }
+    
     const project = projectsData[projectId];
-    if (!project) return;
+    if (!project) {
+        console.error('Project not found:', projectId);
+        return;
+    }
 
     modalTitle.textContent = project.title;
     modalText.textContent = project.description;
@@ -452,10 +476,12 @@ function openProjectModal(projectId) {
     // Add link button if available
     const modalHeader = document.querySelector('.modal-header');
     
-    // Remove existing link button if any
-    const existingLink = modalHeader.querySelector('.modal-link-btn');
-    if (existingLink) {
-        existingLink.remove();
+    if (modalHeader) {
+        // Remove existing link button if any
+        const existingLink = modalHeader.querySelector('.modal-link-btn');
+        if (existingLink) {
+            existingLink.remove();
+        }
     }
     
     if (project.link) {
@@ -472,19 +498,23 @@ function openProjectModal(projectId) {
             </svg>
             Acessar Painel
         `;
-        modalHeader.appendChild(linkButton);
+        if (modalHeader) {
+            modalHeader.appendChild(linkButton);
+        }
     }
 
     // Add technologies section if available
     const modalDescription = document.querySelector('.modal-description');
     
-    // Remove existing tech section if any
-    const existingTech = document.querySelector('.modal-technologies');
-    if (existingTech) {
-        existingTech.remove();
+    if (modalDescription) {
+        // Remove existing tech section if any
+        const existingTech = document.querySelector('.modal-technologies');
+        if (existingTech) {
+            existingTech.remove();
+        }
     }
     
-    if (project.technologies && project.technologies.length > 0) {
+    if (project.technologies && project.technologies.length > 0 && modalDescription) {
         const techSection = document.createElement('div');
         techSection.className = 'modal-technologies';
         
@@ -535,16 +565,25 @@ function openProjectModal(projectId) {
         });
         
         techSection.appendChild(techGrid);
-        modalDescription.appendChild(techSection);
+        if (modalDescription) {
+            modalDescription.appendChild(techSection);
+        }
     }
 
     // Clear and populate gallery (only for private projects with multiple images)
-    galleryGrid.innerHTML = '';
+    if (!galleryGrid) {
+        galleryGrid = document.querySelector('.gallery-grid');
+    }
+    if (galleryGrid) {
+        galleryGrid.innerHTML = '';
+    }
     const modalGallery = document.querySelector('.modal-gallery');
     
     if (project.images && project.images.length > 1) {
         // Show gallery for private projects with multiple images
-        modalGallery.style.display = 'block';
+        if (modalGallery) {
+            modalGallery.style.display = 'block';
+        }
         
         project.images.forEach((imageData, index) => {
             const galleryItem = document.createElement('div');
@@ -568,22 +607,31 @@ function openProjectModal(projectId) {
             });
             
             galleryItem.appendChild(img);
-            galleryGrid.appendChild(galleryItem);
+            if (galleryGrid) {
+                galleryGrid.appendChild(galleryItem);
+            }
         });
     } else {
         // Hide gallery for Gov.br panels (single logo image)
-        modalGallery.style.display = 'none';
+        if (modalGallery) {
+            modalGallery.style.display = 'none';
+        }
     }
 
     // Show modal
     projectModal.classList.add('active');
     document.body.style.overflow = 'hidden';
-}
+};
 
 // Close modal function
 function closeProjectModal() {
-    projectModal.classList.remove('active');
-    document.body.style.overflow = '';
+    if (!projectModal) {
+        initModalElements();
+    }
+    if (projectModal) {
+        projectModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 }
 
 // Image modal functions
@@ -646,23 +694,108 @@ function closeImageModal() {
     }
 }
 
-// Event listeners for project cards
-document.querySelectorAll('.project-card').forEach(card => {
-    card.addEventListener('click', function() {
-        const projectId = this.getAttribute('data-project');
-        if (projectId) {
-            openProjectModal(projectId);
-        }
-    });
-});
-
-// Close modal events
-if (modalClose) {
-    modalClose.addEventListener('click', closeProjectModal);
+// Event listeners for project cards - using event delegation
+function handleProjectCardClick(e) {
+    // Find the closest project-card element
+    const card = e.target.closest('.project-card');
+    if (!card) return;
+    
+    // Check if click is on a folder element (don't interfere with folder)
+    const folder = e.target.closest('.folder, .folder__back, .folder__front, .paper, .folders-wrapper, .folder-container-gov, .folder-container-private');
+    if (folder) {
+        return; // Let folder handle the click
+    }
+    
+    // Check if card is hidden by folder (display: none)
+    const cardStyle = window.getComputedStyle(card);
+    if (cardStyle.display === 'none') {
+        return;
+    }
+    
+    const projectId = card.getAttribute('data-project');
+    if (projectId) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Opening modal for project:', projectId);
+        openProjectModal(projectId);
+    }
 }
 
-if (modalOverlay) {
-    modalOverlay.addEventListener('click', closeProjectModal);
+// Initialize project card listeners
+function initProjectCards() {
+    // Remove any existing listener
+    document.removeEventListener('click', handleProjectCardClick, true);
+    // Add event listener with capture phase to catch clicks early
+    document.addEventListener('click', handleProjectCardClick, true);
+    console.log('Project card listeners initialized');
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProjectCards);
+} else {
+    initProjectCards();
+}
+
+// Listen for custom event from Folder.js
+document.addEventListener('openProjectModal', function(e) {
+    if (e.detail && e.detail.projectId) {
+        console.log('Opening modal via custom event for project:', e.detail.projectId);
+        openProjectModal(e.detail.projectId);
+    }
+});
+
+// Re-initialize after Folder shows cards
+document.addEventListener('projectCardsShown', function(e) {
+    console.log('Project cards shown event received');
+    // Cards are now visible, ensure they're clickable
+    if (e.detail && e.detail.cards) {
+        e.detail.cards.forEach(card => {
+            // Ensure card has pointer events enabled
+            card.style.pointerEvents = 'auto';
+            card.style.cursor = 'pointer';
+        });
+    }
+    // Re-initialize listeners after a short delay
+    setTimeout(() => {
+        initProjectCards();
+    }, 100);
+});
+
+// Also listen for folderToggle as backup
+document.addEventListener('folderToggle', function(e) {
+    if (e.detail && e.detail.open) {
+        console.log('Folder opened, re-initializing card listeners');
+        // Folder just opened, ensure cards are clickable
+        setTimeout(() => {
+            initProjectCards();
+        }, 900); // Wait for animation to complete
+    }
+});
+
+// Close modal events - Initialize after DOM is ready
+function initModalCloseEvents() {
+    if (!modalClose) {
+        modalClose = document.querySelector('.modal-close');
+    }
+    if (!modalOverlay) {
+        modalOverlay = document.querySelector('.modal-overlay');
+    }
+    
+    if (modalClose) {
+        modalClose.addEventListener('click', closeProjectModal);
+    }
+
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeProjectModal);
+    }
+}
+
+// Initialize close events when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModalCloseEvents);
+} else {
+    initModalCloseEvents();
 }
 
 // Close modal on ESC key

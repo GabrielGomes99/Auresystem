@@ -113,7 +113,7 @@ if (document.readyState === 'loading') {
 
 // Re-initialize when new content is loaded (for dynamic content)
 let observerTimeout;
-const observer = new MutationObserver(() => {
+const spotlightMutationObserver = new MutationObserver(() => {
   // Debounce to avoid excessive checks
   clearTimeout(observerTimeout);
   observerTimeout = setTimeout(() => {
@@ -130,7 +130,7 @@ const observer = new MutationObserver(() => {
   }, 100);
 });
 
-observer.observe(document.body, {
+spotlightMutationObserver.observe(document.body, {
   childList: true,
   subtree: true
 });

@@ -423,12 +423,37 @@ function initProjectFolders() {
               cards.forEach((card) => {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0) scale(1)';
+                // Ensure cards are clickable
+                card.style.pointerEvents = 'auto';
+                card.style.cursor = 'pointer';
+                
+                // Add click listener directly to each card
+                card.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  const projectId = this.getAttribute('data-project');
+                  if (projectId) {
+                    // Call the openProjectModal function if it exists
+                    if (typeof openProjectModal === 'function') {
+                      openProjectModal(projectId);
+                    } else {
+                      // Fallback: dispatch custom event
+                      document.dispatchEvent(new CustomEvent('openProjectModal', {
+                        detail: { projectId: projectId }
+                      }));
+                    }
+                  }
+                });
               });
               
               // Show close button
               closeButton.style.opacity = '1';
               closeButton.style.transform = 'translateY(0)';
               closeButton.style.display = 'block';
+              
+              // Dispatch custom event to notify that cards are ready
+              document.dispatchEvent(new CustomEvent('projectCardsShown', { 
+                detail: { cards: cards } 
+              }));
             }, 50);
             
             gridShown = true;
@@ -693,12 +718,37 @@ function initProjectFolders() {
               cards.forEach((card) => {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0) scale(1)';
+                // Ensure cards are clickable
+                card.style.pointerEvents = 'auto';
+                card.style.cursor = 'pointer';
+                
+                // Add click listener directly to each card
+                card.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  const projectId = this.getAttribute('data-project');
+                  if (projectId) {
+                    // Call the openProjectModal function if it exists
+                    if (typeof openProjectModal === 'function') {
+                      openProjectModal(projectId);
+                    } else {
+                      // Fallback: dispatch custom event
+                      document.dispatchEvent(new CustomEvent('openProjectModal', {
+                        detail: { projectId: projectId }
+                      }));
+                    }
+                  }
+                });
               });
               
               // Show close button
               closeButton.style.opacity = '1';
               closeButton.style.transform = 'translateY(0)';
               closeButton.style.display = 'block';
+              
+              // Dispatch custom event to notify that cards are ready
+              document.dispatchEvent(new CustomEvent('projectCardsShown', { 
+                detail: { cards: cards } 
+              }));
             }, 50);
             
             gridShown = true;
