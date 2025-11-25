@@ -67,10 +67,10 @@ window.addEventListener('scroll', () => {
     const currentScroll = window.pageYOffset;
     
     if (currentScroll > 100) {
-        header.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+        header.style.backgroundColor = 'rgba(0, 0, 0, 0.25)';
         header.style.borderBottomColor = 'rgba(255, 255, 255, 0.1)';
     } else {
-        header.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        header.style.backgroundColor = 'rgba(0, 0, 0, 0.15)';
         header.style.borderBottomColor = 'transparent';
     }
     
@@ -108,59 +108,9 @@ window.addEventListener('load', () => {
         emailjs.init("sTdxCcqcJb2jttQge");
     }
     
-    // Initialize stats counter animation
-    initStatsCounter();
-    
     // Initialize back to top button
     initBackToTop();
 });
-
-// Stats Counter Animation
-function initStatsCounter() {
-    const statNumbers = document.querySelectorAll('.stat-number');
-    const observerOptions = {
-        threshold: 0.5,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateCounter(entry.target);
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    statNumbers.forEach(stat => {
-        observer.observe(stat);
-    });
-}
-
-function animateCounter(element) {
-    const target = parseInt(element.getAttribute('data-target'));
-    const duration = 2000; // 2 seconds
-    const increment = target / (duration / 16); // 60fps
-    let current = 0;
-
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            current = target;
-            clearInterval(timer);
-        }
-        
-        // Format number with + for percentages and hours
-        const text = element.parentElement.querySelector('.stat-label').textContent;
-        if (text.includes('%')) {
-            element.textContent = Math.floor(current) + '%';
-        } else if (text.includes('24/7')) {
-            element.textContent = Math.floor(current) + 'h';
-        } else {
-            element.textContent = Math.floor(current) + '+';
-        }
-    }, 16);
-}
 
 // Back to Top Button Functionality
 function initBackToTop() {
@@ -257,39 +207,9 @@ function initMobileMenu() {
 window.addEventListener('resize', initMobileMenu);
 initMobileMenu();
 
-// Add active state to navigation links based on scroll position
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav a');
+// Active state is now handled by GooeyNav.js
 
-function updateActiveNavLink() {
-    const scrollY = window.pageYOffset;
-    
-    sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${sectionId}`) {
-                    link.classList.add('active');
-                }
-            });
-        }
-    });
-}
-
-window.addEventListener('scroll', updateActiveNavLink);
-
-// Add active class styles
-const style = document.createElement('style');
-style.textContent = `
-    .nav a.active {
-        color: var(--text-primary) !important;
-    }
-`;
-document.head.appendChild(style);
+// Active class styles are now handled by gooey-nav.css
 
 // Smooth reveal animation on page load
 window.addEventListener('load', () => {
